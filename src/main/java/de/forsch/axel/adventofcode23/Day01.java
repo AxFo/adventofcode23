@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  */
 public class Day01 {
 
-	public static int part = 1;
+	public static boolean part1 = true;
 
 	private static Pattern firstDigit = Pattern.compile("^[^\\d]*(\\d)");
 	private static Pattern lastDigit = Pattern.compile("(\\d)(?!.*\\d)");
@@ -38,7 +38,7 @@ public class Day01 {
 	}
 
 	public static int decode(String line) {
-		if (part == 1) {
+		if (part1) {
 			return decode1(line);
 		} else {
 			return decode2(line);

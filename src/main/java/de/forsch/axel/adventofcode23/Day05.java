@@ -10,6 +10,9 @@ import de.forsch.axel.adventofcode23.day05.Almanac;
 import de.forsch.axel.adventofcode23.day05.AlmanacMapping;
 
 public class Day05 {
+
+	public static boolean part1 = true;
+
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 
 		Almanac almanac;
@@ -47,7 +50,7 @@ public class Day05 {
 		}
 
 		long done = 0;
-		long todo = almanac.numberOfSeedsToBePlanted2();
+		long todo = numberOfSeedsToBePlanted(almanac);
 		double perc = 0;
 		double loggingInterval = .01;
 
@@ -55,7 +58,7 @@ public class Day05 {
 		long start = System.currentTimeMillis();
 
 		long lowestLocationNumber = Long.MAX_VALUE;
-		for (Long seedId : almanac.getSeedsToBePlanted2()) {
+		for (Long seedId : getSeedsToBePlanted(almanac)) {
 			long mappedId = almanac.mapSeed(seedId);
 			if (mappedId < lowestLocationNumber) {
 				lowestLocationNumber = mappedId;
@@ -72,5 +75,19 @@ public class Day05 {
 		System.out.println("time needed: " + (end - start) / 1000.0 + " seconds");
 
 		System.out.println("minimum location id: " + lowestLocationNumber);
+	}
+
+	public static Iterable<Long> getSeedsToBePlanted(Almanac almanac) {
+		if (part1) {
+			return almanac.getSeedsToBePlanted1();
+		}
+		return almanac.getSeedsToBePlanted2();
+	}
+
+	public static long numberOfSeedsToBePlanted(Almanac almanac) {
+		if (part1) {
+			return almanac.numberOfSeedsToBePlanted1();
+		}
+		return almanac.numberOfSeedsToBePlanted2();
 	}
 }
