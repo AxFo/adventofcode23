@@ -21,16 +21,25 @@ public class Day05 {
 			almanac = Day05.parseAlmanac(reader);
 		}
 
+		long start = System.currentTimeMillis();
+		long lowestLocationNumber = findLowestLocationNumber(almanac, part1);
+		long end = System.currentTimeMillis();
+
+		System.out.println("time needed: " + (end - start) / 1000.0 + " seconds");
+
+		System.out.println("minimum location id: " + lowestLocationNumber);
+	}
+
+	public static long findLowestLocationNumber(Almanac almanac, boolean part1) {
 		long done = 0;
-		long todo = numberOfSeedsToBePlanted(almanac);
+		long todo = numberOfSeedsToBePlanted(almanac, part1);
 		double perc = 0;
 		double loggingInterval = .01;
 
 		System.out.println("number of seeds to be planted: " + todo);
-		long start = System.currentTimeMillis();
 
 		long lowestLocationNumber = Long.MAX_VALUE;
-		for (Long seedId : getSeedsToBePlanted(almanac)) {
+		for (Long seedId : getSeedsToBePlanted(almanac, part1)) {
 			long mappedId = almanac.mapSeed(seedId);
 			if (mappedId < lowestLocationNumber) {
 				lowestLocationNumber = mappedId;
@@ -42,11 +51,7 @@ public class Day05 {
 				perc += loggingInterval;
 			}
 		}
-
-		long end = System.currentTimeMillis();
-		System.out.println("time needed: " + (end - start) / 1000.0 + " seconds");
-
-		System.out.println("minimum location id: " + lowestLocationNumber);
+		return lowestLocationNumber;
 	}
 
 	public static Almanac parseAlmanac(BufferedReader reader) throws IOException {
@@ -84,14 +89,14 @@ public class Day05 {
 		return almanac;
 	}
 
-	public static Iterable<Long> getSeedsToBePlanted(Almanac almanac) {
+	public static Iterable<Long> getSeedsToBePlanted(Almanac almanac, boolean part1) {
 		if (part1) {
 			return almanac.getSeedsToBePlanted1();
 		}
 		return almanac.getSeedsToBePlanted2();
 	}
 
-	public static long numberOfSeedsToBePlanted(Almanac almanac) {
+	public static long numberOfSeedsToBePlanted(Almanac almanac, boolean part1) {
 		if (part1) {
 			return almanac.numberOfSeedsToBePlanted1();
 		}

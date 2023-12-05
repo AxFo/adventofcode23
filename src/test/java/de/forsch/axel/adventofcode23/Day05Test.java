@@ -1,5 +1,7 @@
 package de.forsch.axel.adventofcode23;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -19,7 +21,13 @@ public class Day05Test {
 	@ParameterizedTest
 	@MethodSource("getExamplePart")
 	public void testPart1(Almanac almanac, int minLocation1, int minLocation2) {
-		// TODO
+		assertEquals(minLocation1, Day05.findLowestLocationNumber(almanac, true));
+	}
+
+	@ParameterizedTest
+	@MethodSource("getExamplePart")
+	public void testPart2(Almanac almanac, int minLocation1, int minLocation2) {
+		assertEquals(minLocation2, Day05.findLowestLocationNumber(almanac, false));
 	}
 
 	private static Stream<Arguments> getExamplePart() throws FileNotFoundException, IOException {
