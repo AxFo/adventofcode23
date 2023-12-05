@@ -28,8 +28,9 @@ public class Day01 {
 			while ((line = reader.readLine()) != null) {
 				System.out.println(line);
 
-				sumOfCalibrationValues += Day01.decode(line);
-				System.out.println(Day01.decode(line));
+				int calibrationValue = Day01.decode(line);
+				sumOfCalibrationValues += calibrationValue;
+				System.out.println(calibrationValue);
 				System.out.println();
 			}
 		}
