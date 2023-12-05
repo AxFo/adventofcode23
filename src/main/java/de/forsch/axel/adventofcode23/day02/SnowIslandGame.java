@@ -27,11 +27,19 @@ public class SnowIslandGame {
 	}
 
 	public int power() {
-		int red = sets.stream().max((a, b) -> a.red - b.red).get().red;
-		int green = sets.stream().max((a, b) -> a.green - b.green).get().green;
-		int blue = sets.stream().max((a, b) -> a.blue - b.blue).get().blue;
+		return red() * green() * blue();
+	}
 
-		return red * green * blue;
+	public int red() {
+		return sets.stream().max((a, b) -> a.red - b.red).get().red;
+	}
+
+	public int green() {
+		return sets.stream().max((a, b) -> a.green - b.green).get().green;
+	}
+
+	public int blue() {
+		return sets.stream().max((a, b) -> a.blue - b.blue).get().blue;
 	}
 
 	@Override

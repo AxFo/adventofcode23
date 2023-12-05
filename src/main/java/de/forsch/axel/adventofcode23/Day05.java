@@ -17,36 +17,8 @@ public class Day05 {
 
 		Almanac almanac;
 
-		try (BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/day05.input"))) {
-			String line = reader.readLine();
-
-			almanac = new Almanac(Arrays.stream(line.split(":")[1]//
-					.strip()//
-					.split("\\s+"))//
-					.mapToLong(Long::parseLong)//
-					.toArray());
-
-			reader.readLine(); // skip empty row
-
-			AlmanacMapping currentAlmanacMapping = null;
-			boolean nextIsMappingName = true;
-			while ((line = reader.readLine()) != null) {
-				if (nextIsMappingName) {
-					String[] tokens = line.split("\\s+")[0].split("-");
-					currentAlmanacMapping = new AlmanacMapping(tokens[0], tokens[2]);
-					almanac.addMapping(currentAlmanacMapping);
-					nextIsMappingName = false;
-					continue;
-				}
-
-				if (line.isBlank()) {
-					nextIsMappingName = true;
-					continue;
-				}
-
-				long[] mapping = Arrays.stream(line.split("\\s+")).mapToLong(Long::parseLong).toArray();
-				currentAlmanacMapping.addMappings(mapping[1], mapping[0], mapping[2]);
-			}
+		try (BufferedReader reader = new BufferedReader(new FileReader("src/test/resources/day05.input"))) {
+			almanac = Day05.parseAlmanac(reader);
 		}
 
 		long done = 0;
@@ -75,6 +47,41 @@ public class Day05 {
 		System.out.println("time needed: " + (end - start) / 1000.0 + " seconds");
 
 		System.out.println("minimum location id: " + lowestLocationNumber);
+	}
+
+	public static Almanac parseAlmanac(BufferedReader reader) throws IOException {
+		Almanac almanac;
+
+		String line = reader.readLine();
+
+		almanac = new Almanac(Arrays.stream(line.split(":")[1]//
+				.strip()//
+				.split("\\s+"))//
+				.mapToLong(Long::parseLong)//
+				.toArray());
+
+		reader.readLine(); // skip empty row
+
+		AlmanacMapping currentAlmanacMapping = null;
+		boolean nextIsMappingName = true;
+		while ((line = reader.readLine()) != null) {
+			if (nextIsMappingName) {
+				String[] tokens = line.split("\\s+")[0].split("-");
+				currentAlmanacMapping = new AlmanacMapping(tokens[0], tokens[2]);
+				almanac.addMapping(currentAlmanacMapping);
+				nextIsMappingName = false;
+				continue;
+			}
+
+			if (line.isBlank()) {
+				nextIsMappingName = true;
+				continue;
+			}
+
+			long[] mapping = Arrays.stream(line.split("\\s+")).mapToLong(Long::parseLong).toArray();
+			currentAlmanacMapping.addMappings(mapping[1], mapping[0], mapping[2]);
+		}
+		return almanac;
 	}
 
 	public static Iterable<Long> getSeedsToBePlanted(Almanac almanac) {

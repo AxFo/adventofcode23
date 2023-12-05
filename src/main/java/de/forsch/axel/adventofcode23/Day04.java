@@ -28,6 +28,17 @@ public class Day04 {
 			}
 		}
 
+		Day04.processScratchcards(scratchcards);
+
+		for (Scratchcard scratchcard : scratchcards) {
+			System.out.println(scratchcard);
+		}
+
+		System.out.println("points = " + scratchcards.stream().mapToInt(Scratchcard::points).sum());
+		System.out.println("number of cards = " + scratchcards.stream().mapToInt(Scratchcard::count).sum());
+	}
+
+	public static void processScratchcards(List<Scratchcard> scratchcards) {
 		scratchcards.add(0, null); // to align game indices (they start with 1)
 		for (int gameId = 1; gameId < scratchcards.size(); ++gameId) {
 			Scratchcard scratchcard = scratchcards.get(gameId);
@@ -38,15 +49,6 @@ public class Day04 {
 			}
 		}
 		scratchcards.remove(0); // remove scratchcard that was used to align indices
-
-		for (
-
-		Scratchcard scratchcard : scratchcards) {
-			System.out.println(scratchcard);
-		}
-
-		System.out.println("points = " + scratchcards.stream().mapToInt(Scratchcard::points).sum());
-		System.out.println("number of cards = " + scratchcards.stream().mapToInt(Scratchcard::count).sum());
 	}
 
 	public static Scratchcard parseLine(String line) {
