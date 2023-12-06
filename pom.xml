@@ -7,7 +7,7 @@
 
 	<groupId>de.forsch.axel</groupId>
 	<artifactId>adventofcode23</artifactId>
-	<version>23.05</version>
+	<version>23.06</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
