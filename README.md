@@ -15,9 +15,9 @@ For days where part 1 and part 2 require different approaches, a static variable
 
 | Day    | Part 1 | Part 2 |
 | ------ | ------ | ------ |
-| 01.12. | - [x]  | - [x]  |
-| 02.12. | - [x]  | - [x]  |
-| 03.12. | - [x]  | - [x]  |
-| 04.12. | - [x]  | - [x]  |
-| 05.12. | - [x]  | - [x]  |
-| 06.12. | - [x]  | - [x]  |
+| 01.12. | <ul><li>- [x] </li></ul>  | <ul><li>- [x] </li></ul>  |
+| 02.12. | <ul><li>- [x] </li></ul>  | <ul><li>- [x] </li></ul>  |
+| 03.12. | <ul><li>- [x] </li></ul>  | <ul><li>- [x] </li></ul>  |
+| 04.12. | <ul><li>- [x] </li></ul>  | <ul><li>- [x] </li></ul>  |
+| 05.12. | <ul><li>- [x] </li></ul>  | <ul><li>- [x] </li></ul>  |
+| 06.12. | <ul><li>- [x] </li></ul>  | <ul><li>- [x] </li></ul>  |
