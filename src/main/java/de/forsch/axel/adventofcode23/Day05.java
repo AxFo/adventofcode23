@@ -17,7 +17,7 @@ public class Day05 {
 
 		Almanac almanac;
 
-		try (BufferedReader reader = new BufferedReader(new FileReader("src/test/resources/day05.input"))) {
+		try (BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/day05.input"))) {
 			almanac = Day05.parseAlmanac(reader);
 		}
 
