@@ -21,3 +21,4 @@ For days where part 1 and part 2 require different approaches, a static variable
 | 04.12. | <ul><li>- [x] </li></ul>  | <ul><li>- [x] </li></ul>  |
 | 05.12. | <ul><li>- [x] </li></ul>  | <ul><li>- [x] </li></ul>  |
 | 06.12. | <ul><li>- [x] </li></ul>  | <ul><li>- [x] </li></ul>  |
+| 07.12. | <ul><li>- [x] </li></ul>  | <ul><li>- [x] </li></ul>  |
