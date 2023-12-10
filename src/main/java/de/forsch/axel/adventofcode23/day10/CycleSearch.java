@@ -130,52 +130,23 @@ public class CycleSearch {
 		if (timestamp == 0) {
 			throw new RuntimeException("Execute search first.");
 		}
-		int enclosedArea = 0;
 
-//		int[][] enclosed = new int[grid.height][grid.width];
 		char[][] cycleGrid = cycleGrid();
 
-		LinkedList<Character> insideFound;
+		int enclosedArea = 0;
+
+		int count;
 		for (int r = 0; r < grid.height; ++r) {
-			insideFound = new LinkedList<>();
+			count = 0;
 
 			for (int c = 0; c < grid.width; ++c) {
 				char gridValue = cycleGrid[r][c];
-				if (gridValue != 0 && insideFound.isEmpty()) {
-					insideFound.add(cycleGrid[r][c]);
-					continue;
-				}
-				if (gridValue != 0) {
-					if (cycleGrid[r][c] == '-') {
-						continue;
-					}
-
-					char lastOpener = insideFound.getLast();
-					if (lastOpener == '|' && (gridValue == 'F' || gridValue == 'L')) {
-						insideFound.add(gridValue);
-						continue;
-					}
-					if ((lastOpener == 'L' && gridValue == '7') || (lastOpener == 'F' && gridValue == 'J')) {
-						insideFound.removeLast();
-
-						// if it was outside, L7 or FJ act as a simple | (thus opening it)
-						if (insideFound.isEmpty()) {
-							insideFound.add('|');
-						}
-						// if it was not outside, it is now outside, but there is still an opening token
-						// in the list
-						else {
-							insideFound.removeLast();
-						}
-						continue;
-					}
-
-					insideFound.removeLast();
-					continue;
-				}
-				if (insideFound.size() == 1) {
-//					enclosed[r][c]++;
+				if (gridValue == 0 && count % 2 == 1) {
 					enclosedArea++;
+					continue;
+				}
+				if (gridValue == '|' || gridValue == 'F' || gridValue == '7') {
+					count++;
 				}
 			}
 		}
