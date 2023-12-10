@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 import de.forsch.axel.adventofcode23.day10.PipeGrid.Pipe;
 
-public class GridSearch {
+public class CycleSearch {
 
 	private final PipeGrid grid;
 
@@ -14,7 +14,7 @@ public class GridSearch {
 
 	private Pipe[] cycleEnds = new Pipe[2];
 
-	public GridSearch(PipeGrid grid) {
+	public CycleSearch(PipeGrid grid) {
 		super();
 		this.grid = grid;
 		this.timestamp = 0;
@@ -66,22 +66,64 @@ public class GridSearch {
 			throw new RuntimeException("Execute search first.");
 		}
 
+		int[][] toS = new int[2][];
 		char[][] cycleGrid = new char[grid.height][grid.width];
 
 		Pipe p = cycleEnds[0];
 		while (p.type != 'S') {
 			cycleGrid[p.row][p.column] = p.type;
+			toS[0] = new int[] { p.row, p.column };
 			p = predecessors[p.id(grid)];
 		}
 
 		p = cycleEnds[1];
 		while (p.type != 'S') {
 			cycleGrid[p.row][p.column] = p.type;
+			toS[1] = new int[] { p.row, p.column };
 			p = predecessors[p.id(grid)];
 		}
 
-		cycleGrid[grid.getSource().row][grid.getSource().column] = 'S';
+		cycleGrid[grid.getSource().row][grid.getSource().column] = getSourcePipeType(toS);
 		return cycleGrid;
+	}
+
+	public char getSourcePipeType(int[][] toSource) {
+		Pipe source = grid.getSource();
+		int r1 = toSource[0][0] - source.row;
+		int c1 = toSource[0][1] - source.column;
+		double d1 = Math.atan2(r1, c1) / Math.PI * 2;
+
+		int r2 = toSource[1][0] - source.row;
+		int c2 = toSource[1][1] - source.column;
+		double d2 = Math.atan2(r2, c2) / Math.PI * 2;
+
+		// d => 0: right, 1: bottom, -1: top, 2: left
+		if (d1 == 0 || d2 == 0) {
+			if (d1 == 1 || d2 == 1) {
+				return 'F';
+			}
+			if (d1 == 2 || d2 == 2) {
+				return '-';
+			}
+			if (d1 == -1 || d2 == -1) {
+				return 'L';
+			}
+		}
+		if (d1 == 1 || d2 == 1) {
+			if (d1 == 2 || d2 == 2) {
+				return '7';
+			}
+			if (d1 == -1 || d2 == -1) {
+				return '|';
+			}
+		}
+		if (d1 == 2 || d2 == 2) {
+			if (d1 == -1 || d2 == -1) {
+				return 'J';
+			}
+		}
+
+		throw new RuntimeException("cannot happen");
 	}
 
 	public int getEnclosedArea() {
@@ -90,58 +132,50 @@ public class GridSearch {
 		}
 		int enclosedArea = 0;
 
-		int[][] enclosed = new int[grid.height][grid.width];
+//		int[][] enclosed = new int[grid.height][grid.width];
 		char[][] cycleGrid = cycleGrid();
 
-		int insideFound = 0;
+		LinkedList<Character> insideFound;
 		for (int r = 0; r < grid.height; ++r) {
-			insideFound = 0;
-			for (int c = 0; c < grid.width; ++c) {
-				if (cycleGrid[r][c] != 0 && insideFound == 0) {
-					insideFound = 1;
-					continue;
-				}
-				if (cycleGrid[r][c] != 0 && insideFound > 0) {
-					if (cycleGrid[r][c] == '7' || cycleGrid[r][c] == '|' || cycleGrid[r][c] == 'J') {
-						insideFound--;
-						continue;
-					}
-					if (cycleGrid[r][c] == 'F' || cycleGrid[r][c] == 'L') {
-						insideFound++;
-						continue;
-					}
-					continue;
-				}
-				if (insideFound == 1) {
-					enclosed[r][c]++;
-				}
-			}
-		}
+			insideFound = new LinkedList<>();
 
-		insideFound = 0;
-		for (int c = 0; c < grid.width; ++c) {
-			insideFound = 0;
-			for (int r = 0; r < grid.height; ++r) {
-				if (cycleGrid[r][c] != 0 && insideFound == 0) {
-					insideFound = 1;
+			for (int c = 0; c < grid.width; ++c) {
+				char gridValue = cycleGrid[r][c];
+				if (gridValue != 0 && insideFound.isEmpty()) {
+					insideFound.add(cycleGrid[r][c]);
 					continue;
 				}
-				if (cycleGrid[r][c] != 0 && insideFound > 0) {
-					if (cycleGrid[r][c] == 'L' || cycleGrid[r][c] == '-' || cycleGrid[r][c] == 'J') {
-						insideFound--;
+				if (gridValue != 0) {
+					if (cycleGrid[r][c] == '-') {
 						continue;
 					}
-					if (cycleGrid[r][c] == 'F' || cycleGrid[r][c] == '7') {
-						insideFound++;
+
+					char lastOpener = insideFound.getLast();
+					if (lastOpener == '|' && (gridValue == 'F' || gridValue == 'L')) {
+						insideFound.add(gridValue);
 						continue;
 					}
+					if ((lastOpener == 'L' && gridValue == '7') || (lastOpener == 'F' && gridValue == 'J')) {
+						insideFound.removeLast();
+
+						// if it was outside, L7 or FJ act as a simple | (thus opening it)
+						if (insideFound.isEmpty()) {
+							insideFound.add('|');
+						}
+						// if it was not outside, it is now outside, but there is still an opening token
+						// in the list
+						else {
+							insideFound.removeLast();
+						}
+						continue;
+					}
+
+					insideFound.removeLast();
 					continue;
 				}
-				if (insideFound == 1) {
-					enclosed[r][c] += 2;
-					if (enclosed[r][c] == 3) {
-						enclosedArea++;
-					}
+				if (insideFound.size() == 1) {
+//					enclosed[r][c]++;
+					enclosedArea++;
 				}
 			}
 		}
