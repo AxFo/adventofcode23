@@ -29,3 +29,4 @@ For days where part 1 and part 2 require different approaches, a static variable
 | 12  | 04:13:38 | 11066  | -        | -      |
 | 13  | 10:06:08 | 18966  | 10:41:51 | 15506  |
 | 14  | 10:18:23 | 22252  | 11:31:04 | 16017  |
+| 15  | 07:40:14 | 21990  | 08:15:21 | 18254  |
