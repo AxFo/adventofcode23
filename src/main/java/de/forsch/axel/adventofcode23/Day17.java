@@ -7,6 +7,8 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import de.forsch.axel.adventofcode23.day17.HeatLossMap;
+import de.forsch.axel.adventofcode23.day17.HeatLossMap.NormalCrucibleNeighborhood;
+import de.forsch.axel.adventofcode23.day17.HeatLossMap.UltraCrucibleNeighborhood;
 import de.forsch.axel.adventofcode23.notation.GridCoordinate;
 
 public class Day17 {
@@ -15,8 +17,13 @@ public class Day17 {
 		List<String> lines = Files.readAllLines(Paths.get("src/main/resources/day17.input"), StandardCharsets.UTF_8);
 
 		HeatLossMap map = new HeatLossMap(lines);
-		System.out.println(map);
+//		System.out.println(map);
 
-		System.out.println(map.findPath(new GridCoordinate(0, 0), new GridCoordinate(map.height - 1, map.width - 1)));
+		System.out.println(map.findPath(new GridCoordinate(0, 0), new GridCoordinate(map.height - 1, map.width - 1),
+				new NormalCrucibleNeighborhood(map)));
+
+		System.out.println(map.findPath(new GridCoordinate(0, 0), new GridCoordinate(map.height - 1, map.width - 1),
+				new UltraCrucibleNeighborhood(map)));
+
 	}
 }

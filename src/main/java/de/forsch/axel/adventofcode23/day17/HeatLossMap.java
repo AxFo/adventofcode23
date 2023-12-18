@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -30,14 +31,14 @@ public class HeatLossMap {
 		}
 	}
 
-	public int findPath(GridCoordinate source, GridCoordinate target) {
-		int[][][][] distances = new int[height][width][4][3];
-		PathElement[][][][] predecessors = new PathElement[height][width][4][3];
+	public int findPath(GridCoordinate source, GridCoordinate target, CrucibleNeighborhood neighborhood) {
+		int[][][][] distances = new int[height][width][4][neighborhood.maxStepsInDirection()];
+		PathElement[][][][] predecessors = new PathElement[height][width][4][neighborhood.maxStepsInDirection()];
 
 		for (int r = 0; r < height; ++r) {
 			for (int c = 0; c < width; ++c) {
 				for (int d = 0; d < 4; ++d) {
-					for (int s = 0; s < 3; ++s) {
+					for (int s = 0; s < neighborhood.maxStepsInDirection(); ++s) {
 						distances[r][c][d][s] = Integer.MAX_VALUE;
 						distances[source.row][source.column][d][s] = 0;
 						predecessors[r][c][d][s] = null;
@@ -46,50 +47,25 @@ public class HeatLossMap {
 			}
 		}
 
-//		Set<PathElement> test = new HashSet<>();
-//		test.add(new PathElement(1, Direction.RIGHT, 1, new GridCoordinate(0, 1)));
-//		test.add(new PathElement(2, Direction.RIGHT, 2, new GridCoordinate(0, 2)));
-//		test.add(new PathElement(3, Direction.DOWN, 1, new GridCoordinate(1, 2)));
-//		test.add(new PathElement(4, Direction.RIGHT, 1, new GridCoordinate(1, 3)));
-//		test.add(new PathElement(5, Direction.RIGHT, 2, new GridCoordinate(1, 4)));
-//		test.add(new PathElement(6, Direction.RIGHT, 3, new GridCoordinate(1, 5)));
-//		test.add(new PathElement(7, Direction.UP, 1, new GridCoordinate(0, 5)));
-//		test.add(new PathElement(8, Direction.RIGHT, 1, new GridCoordinate(0, 6)));
-//		test.add(new PathElement(9, Direction.RIGHT, 2, new GridCoordinate(0, 7)));
-//		test.add(new PathElement(10, Direction.RIGHT, 3, new GridCoordinate(0, 8)));
-
 		PriorityQueue<PathElement> q = new PriorityQueue<>();
 		q.add(new PathElement(0, Direction.RIGHT, 0, source));
-//			q.add(new PathElement(0, Direction.DOWN, 1, source));
+		q.add(new PathElement(0, Direction.DOWN, 0, source));
 
 		while (!q.isEmpty()) {
 			PathElement u = q.poll();
-//			if (test.contains(u)) {
-//				System.out.print("-- " + u);
-//				System.out.println();
-//			}
 
 			int distU = distances[u.location.row][u.location.column][u.direction.ordinal()][Math.max(0,
 					u.stepsInDirection - 1)];
-//			System.out.println("u=" + u + ", dist=" + distU);
 
-			List<PathElement> neighbors = u.neighbors(map);
+			List<PathElement> neighbors = neighborhood.apply(u);
 			for (PathElement v : neighbors) {
 				int distUV = v.dist;
 
 				int distSUV = distU + distUV;
-//				System.out.println("  " + v + ", distUV=" + distUV + ", distSUV=" + distSUV + ", distV="
-//						+ distances[v.location.row][v.location.column][v.direction.ordinal()][v.stepsInDirection - 1]);
 				if (distSUV < distances[v.location.row][v.location.column][v.direction.ordinal()][v.stepsInDirection
 						- 1]) {
 					q.remove(v);
 					v.setDistance(distSUV);
-//					if (distances[v.location.row][v.location.column][v.direction.ordinal()][v.stepsInDirection
-//							- 1] < Integer.MAX_VALUE) {
-//						System.out.println("    new best path to " + v);
-//					} else {
-//						System.out.println("    first path to " + v + " found");
-//					}
 					distances[v.location.row][v.location.column][v.direction.ordinal()][v.stepsInDirection
 							- 1] = distSUV;
 					predecessors[v.location.row][v.location.column][v.direction.ordinal()][v.stepsInDirection - 1] = u;
@@ -102,7 +78,7 @@ public class HeatLossMap {
 		int minDist = Integer.MAX_VALUE;
 		int minSteps = 0;
 		for (Direction d : Direction.values()) {
-			for (int s = 0; s < 3; ++s) {
+			for (int s = neighborhood.minStepsInDirection() - 1; s < neighborhood.maxStepsInDirection(); ++s) {
 				int currentDist = distances[target.row][target.column][d.ordinal()][s];
 				if (currentDist < minDist) {
 					minDirection = d;
@@ -117,7 +93,6 @@ public class HeatLossMap {
 		PathElement current = new PathElement(minDist, minDirection, minSteps, target);
 		path.addFirst(current);
 
-		System.out.println();
 		do {
 			current = predecessors[current.location.row][current.location.column][current.direction
 					.ordinal()][current.stepsInDirection - 1];
@@ -147,7 +122,6 @@ public class HeatLossMap {
 				break;
 			}
 			finalPath[element.location.row][element.location.column] = ch;
-			System.out.println(element);
 		}
 
 		System.out.println();
@@ -174,6 +148,76 @@ public class HeatLossMap {
 		return sb.toString();
 	}
 
+	public static abstract class CrucibleNeighborhood implements Function<PathElement, List<PathElement>> {
+
+		private int[][] map;
+
+		public CrucibleNeighborhood(HeatLossMap map) {
+			this.map = map.map;
+		}
+
+		public abstract int minStepsInDirection();
+
+		public abstract int maxStepsInDirection();
+
+		@Override
+		public List<PathElement> apply(PathElement t) {
+			List<PathElement> neighbors = new ArrayList<>();
+			for (Direction direction : Direction.values()) {
+				GridCoordinate loc = t.location.step(direction);
+				if (direction != t.direction && direction.ordinal() % 2 == t.direction.ordinal() % 2) {
+					continue;
+				}
+				if (!loc.isValid(map)) {
+					continue;
+				}
+				if (direction != t.direction && t.stepsInDirection < minStepsInDirection()) {
+					continue;
+				}
+				if (direction == t.direction && t.stepsInDirection == maxStepsInDirection()) {
+					continue;
+				}
+				neighbors.add(new PathElement(loc.evaluate(map), direction,
+						direction == t.direction ? t.stepsInDirection + 1 : 1, loc));
+			}
+			return neighbors;
+		}
+	}
+
+	public static final class NormalCrucibleNeighborhood extends CrucibleNeighborhood {
+
+		public NormalCrucibleNeighborhood(HeatLossMap map) {
+			super(map);
+		}
+
+		@Override
+		public int minStepsInDirection() {
+			return 1;
+		}
+
+		@Override
+		public int maxStepsInDirection() {
+			return 3;
+		}
+	}
+
+	public static final class UltraCrucibleNeighborhood extends CrucibleNeighborhood {
+
+		public UltraCrucibleNeighborhood(HeatLossMap map) {
+			super(map);
+		}
+
+		@Override
+		public int minStepsInDirection() {
+			return 4;
+		}
+
+		@Override
+		public int maxStepsInDirection() {
+			return 10;
+		}
+	}
+
 	private static class PathElement implements Comparable<PathElement> {
 		public int dist;
 		public final Direction direction;
@@ -186,25 +230,6 @@ public class HeatLossMap {
 			this.stepsInDirection = stepsInDirection;
 			this.direction = direction;
 			this.location = location;
-		}
-
-		public List<PathElement> neighbors(int[][] map) {
-			List<PathElement> neighbors = new ArrayList<>();
-			for (Direction direction : Direction.values()) {
-				GridCoordinate loc = location.step(direction);
-				if (direction != this.direction && direction.ordinal() % 2 == this.direction.ordinal() % 2) {
-					continue;
-				}
-				if (!loc.isValid(map)) {
-					continue;
-				}
-				if (direction == this.direction && stepsInDirection == 3) {
-					continue;
-				}
-				neighbors.add(new PathElement(loc.evaluate(map), direction,
-						direction == this.direction ? stepsInDirection + 1 : 1, loc));
-			}
-			return neighbors;
 		}
 
 		public void setDistance(int d) {

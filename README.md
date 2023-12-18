@@ -31,3 +31,4 @@ For days where part 1 and part 2 require different approaches, a static variable
 | 14  | 10:18:23 | 22252  | 11:31:04 | 16017  |
 | 15  | 07:40:14 | 21990  | 08:15:21 | 18254  |
 | 16  | 10:26:35 | 17227  | 10:45:05 | 16273  |
+| 17  |     >24h | 15791  |     >24h | 14709  |
