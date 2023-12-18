@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import de.forsch.axel.adventofcode23.day16.LaserBeam.Direction;
+import de.forsch.axel.adventofcode23.notation.Direction;
 
 public class Contraption {
 

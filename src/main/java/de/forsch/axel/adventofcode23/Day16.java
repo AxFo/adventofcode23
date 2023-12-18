@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import de.forsch.axel.adventofcode23.day16.Contraption;
-import de.forsch.axel.adventofcode23.day16.LaserBeam.Direction;
+import de.forsch.axel.adventofcode23.notation.Direction;
 
 public class Day16 {
 

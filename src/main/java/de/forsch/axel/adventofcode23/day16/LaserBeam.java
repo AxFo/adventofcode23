@@ -1,5 +1,7 @@
 package de.forsch.axel.adventofcode23.day16;
 
+import de.forsch.axel.adventofcode23.notation.Direction;
+
 public class LaserBeam {
 
 	public final Contraption contraption;
@@ -13,9 +15,5 @@ public class LaserBeam {
 		this.row = row;
 		this.column = column;
 		this.contraption = contraption;
-	}
-
-	public static enum Direction {
-		UP, RIGHT, DOWN, LEFT;
 	}
 }
